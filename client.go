@@ -292,26 +292,18 @@ func (cli *Client) GetBusinessDays(ctx context.Context, date time.Time) (*GetBus
 	}, nil
 }
 
-type GetBankResponse struct {
+type GetBanksResponse struct {
 	Version Version `json:"version"`
 	Banks   []*Bank `json:"data"`
 }
 
-func (cli *Client) GetBank(ctx context.Context, bankCode *string) (*GetBankResponse, error) {
-	var p string
-	if bankCode != nil {
-		if len(*bankCode) != 4 {
-			return nil, ErrInvalidArgument
-		}
-		p = "/" + *bankCode
-	}
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, cli.Endpoint+"/bank"+p, nil)
+func (cli *Client) GetBanks(ctx context.Context) (*GetBanksResponse, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, cli.Endpoint+"/bank", nil)
 	if err != nil {
 		return nil, fmt.Errorf(errFailedGenerateRequestFormat, err)
 	}
 
-	var res GetBankResponse
+	var res GetBanksResponse
 	if err := cli.sendRequest(req, &res); err != nil {
 		return nil, fmt.Errorf(errFailedRequestFormat, err)
 	}
@@ -319,30 +311,22 @@ func (cli *Client) GetBank(ctx context.Context, bankCode *string) (*GetBankRespo
 	return &res, nil
 }
 
-type GetBankBranchResponse struct {
+type GetBankBranchesResponse struct {
 	Version      Version      `json:"version"`
 	BankBranches BankBranches `json:"data"`
 }
 
-func (cli *Client) GetBankBranches(ctx context.Context, bankCode string, branchCode *string) (*GetBankBranchResponse, error) {
+func (cli *Client) GetBankBranches(ctx context.Context, bankCode string) (*GetBankBranchesResponse, error) {
 	if len(bankCode) != 4 {
 		return nil, ErrInvalidArgument
 	}
 
-	var p string
-	if branchCode != nil {
-		if len(*branchCode) != 3 {
-			return nil, ErrInvalidArgument
-		}
-		p = "/" + *branchCode
-	}
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, cli.Endpoint+"/bank/"+bankCode+"/branches"+p, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, cli.Endpoint+"/bank/"+bankCode+"/branches", nil)
 	if err != nil {
 		return nil, fmt.Errorf(errFailedGenerateRequestFormat, err)
 	}
 
-	var res GetBankBranchResponse
+	var res GetBankBranchesResponse
 	if err := cli.sendRequest(req, &res); err != nil {
 		return nil, fmt.Errorf(errFailedRequestFormat, err)
 	}
