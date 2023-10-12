@@ -1,4 +1,4 @@
-module github.com/osamingo/go-kenall/v2
+module github.com/nagisa-inc/go-kenall
 
 go 1.24
 
