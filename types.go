@@ -155,14 +155,6 @@ type (
 	}
 )
 
-func (b BankBranches) Branches() []*Branch {
-	l := make([]*Branch, 0, len(b.BranchMap))
-	for _, v := range b.BranchMap {
-		l = append(l, v)
-	}
-	return l
-}
-
 var (
 	//nolint: gochecknoglobals
 	nullLiteral = []byte("null")
