@@ -291,3 +291,61 @@ func (cli *Client) GetBusinessDays(ctx context.Context, date time.Time) (*GetBus
 		},
 	}, nil
 }
+
+type GetBankResponse struct {
+	Version Version `json:"version"`
+	Banks   []*Bank `json:"data"`
+}
+
+func (cli *Client) GetBank(ctx context.Context, bankCode *string) (*GetBankResponse, error) {
+	var p string
+	if bankCode != nil {
+		if len(*bankCode) != 4 {
+			return nil, ErrInvalidArgument
+		}
+		p = "/" + *bankCode
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, cli.Endpoint+"/bank"+p, nil)
+	if err != nil {
+		return nil, fmt.Errorf(errFailedGenerateRequestFormat, err)
+	}
+
+	var res GetBankResponse
+	if err := cli.sendRequest(req, &res); err != nil {
+		return nil, fmt.Errorf(errFailedRequestFormat, err)
+	}
+
+	return &res, nil
+}
+
+type GetBankBranchResponse struct {
+	Version      Version      `json:"version"`
+	BankBranches BankBranches `json:"data"`
+}
+
+func (cli *Client) GetBankBranches(ctx context.Context, bankCode string, branchCode *string) (*GetBankBranchResponse, error) {
+	if len(bankCode) != 4 {
+		return nil, ErrInvalidArgument
+	}
+
+	var p string
+	if branchCode != nil {
+		if len(*branchCode) != 3 {
+			return nil, ErrInvalidArgument
+		}
+		p = "/" + *branchCode
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, cli.Endpoint+"/bank/"+bankCode+"/branches"+p, nil)
+	if err != nil {
+		return nil, fmt.Errorf(errFailedGenerateRequestFormat, err)
+	}
+
+	var res GetBankBranchResponse
+	if err := cli.sendRequest(req, &res); err != nil {
+		return nil, fmt.Errorf(errFailedRequestFormat, err)
+	}
+
+	return &res, nil
+}
