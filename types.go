@@ -121,6 +121,24 @@ type (
 		LegalHoliday bool `json:"is_legal_holiday"`
 		time.Time
 	}
+	Bank struct {
+		Code     string `json:"code"`
+		Name     string `json:"name"`
+		Katakana string `json:"katakana"`
+		Hiragana string `json:"hiragana"`
+		Romaji   string `json:"romaji"`
+	}
+	Branch struct {
+		Code     string `json:"code"`
+		Name     string `json:"name"`
+		Katakana string `json:"katakana"`
+		Hiragana string `json:"hiragana"`
+		Romaji   string `json:"romaji"`
+	}
+	BankBranches struct {
+		Bank      Bank               `json:"bank"`
+		BranchMap map[string]*Branch `json:"branches"`
+	}
 	// A Query is data normalized to an address.
 	Query struct {
 		Q           NullString `json:"q"`
@@ -136,6 +154,14 @@ type (
 		FloorRoom   NullString `json:"floor_room"`
 	}
 )
+
+func (b BankBranches) Branches() []*Branch {
+	l := make([]*Branch, 0, len(b.BranchMap))
+	for _, v := range b.BranchMap {
+		l = append(l, v)
+	}
+	return l
+}
 
 var (
 	//nolint: gochecknoglobals
