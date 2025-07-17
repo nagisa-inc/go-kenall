@@ -325,6 +325,7 @@ func (cli *Client) GetBankBranches(ctx context.Context, bankCode string) (*GetBa
 	if err != nil {
 		return nil, fmt.Errorf(errFailedGenerateRequestFormat, err)
 	}
+	req.Header.Set("KenAll-API-Version", "2024-01-01")
 
 	var res GetBankBranchesResponse
 	if err := cli.sendRequest(req, &res); err != nil {
